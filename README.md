@@ -4,6 +4,8 @@
 
 作业要求、验收标准、素材说明和提交流程见 [ASSIGNMENT.md](ASSIGNMENT.md)。
 
+统一使用 **C++ 和 OpenCV C++ 接口**实现，使用 **CMake** 配置和编译，在 **Linux** 环境下验收。每位同学在个人目录中提供独立的 `CMakeLists.txt`，构建方式见 [CONTRIBUTING.md](CONTRIBUTING.md)。
+
 ## 仓库结构
 
 ```text
