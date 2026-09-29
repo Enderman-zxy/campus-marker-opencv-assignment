@@ -1,0 +1,23 @@
+# Python cache and local environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.mypy_cache/
+.pytest_cache/
+
+# Build and editor output
+build/
+dist/
+.cache/
+.idea/
+.vscode/
+*.swp
+
+# Generated outputs
+outputs/
+results/
+*.mp4
+*.mkv
+

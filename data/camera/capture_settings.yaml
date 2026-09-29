@@ -1,0 +1,15 @@
+# Values transcribed from the supplied camera settings screenshot.
+# The screenshot does not state the unit of exposure time.
+image:
+  width_px: 1440
+  height_px: 1080
+capture:
+  exposure_time_display: 10000.0000
+  exposure_time_unit: unknown
+  gain: 16.0114
+calibration:
+  camera_matrix: null
+  distortion_coefficients: null
+  note: >-
+    Intrinsic and distortion parameters were not present in the supplied
+    materials. Estimate them from the teacher-confirmed calibration video before using PnP.
