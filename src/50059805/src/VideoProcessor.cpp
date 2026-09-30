@@ -1,11 +1,13 @@
 #include "VideoProcessor.h"
 #include "Visualizer.h"
+#include <iostream>
 
 VideoProcessor::VideoProcessor() {}
 
 void VideoProcessor::run(const std::string& videoPath) {
   cv::VideoCapture cap(videoPath);
   if (!cap.isOpened()) {
+    std::cerr << "Error: Could not open video file: " << videoPath << std::endl;
     return;
   }
   cv::Mat frame;
@@ -14,6 +16,7 @@ void VideoProcessor::run(const std::string& videoPath) {
 
   while (cap.read(frame)) {
     if (frame.empty()) {
+      std::cerr << "Error: Empty frame captured." << std::endl;
       break;
     }
 
