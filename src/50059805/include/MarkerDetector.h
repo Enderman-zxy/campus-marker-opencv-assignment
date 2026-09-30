@@ -6,7 +6,7 @@
 
 struct MarkerResult {
   bool detected = false;
-  std::vector<cv::Point2f> vertices;
+  std::vector<cv::Point2f> points;
   cv::Rect boundingBox;
 };
 
@@ -17,5 +17,5 @@ class MarkerDetector {
 
  private:
   cv::Mat preprocess(const cv::Mat& frame);
-  std::vector<cv::Point2f> sortVertices(const std::vector<cv::Point2f>& pts);
+  std::vector<cv::Point2f> sortPoints(const std::vector<cv::Point2f>& pts);
 };
