@@ -6,12 +6,6 @@ void Visualizer::drawMarker(cv::Mat& frame, const MarkerResult& result) {
   if (frame.empty()) {
     return;
   }
-
-  if (result.is_partical) {
-    cv::putText(frame, "Target Partially Detected", cv::Point(30, 50),
-                font_face_, 1.0, cv::Scalar(0, 255, 255), 2);
-    return;
-  }
   // 如果未检测到目标，画一个提示文字，直接返回
   if (!result.detected) {
     cv::putText(frame, "Target Lost", cv::Point(30, 50), font_face_, 1.0,

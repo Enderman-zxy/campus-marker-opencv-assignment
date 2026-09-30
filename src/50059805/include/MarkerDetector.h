@@ -8,9 +8,6 @@ struct MarkerResult {
   bool detected = false;
   std::vector<cv::Point2f> points;
   cv::Rect boundingBox;
-
-  // 补充，检测是否目标完整处于画面中
-  bool is_partical = false;
 };
 
 class MarkerDetector {

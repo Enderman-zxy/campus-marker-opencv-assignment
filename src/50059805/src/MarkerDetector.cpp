@@ -80,17 +80,6 @@ MarkerResult MarkerDetector::detect(const cv::Mat& frame) {
     result.detected = true;
     result.boundingBox = bouding_box;
 
-    //--- 补充，检测是否目标完整处于画面中
-    int margin = 10;
-    if (bouding_box.x <= margin || bouding_box.y <= margin ||
-        bouding_box.x + bouding_box.width > frame.cols - margin ||
-        bouding_box.y + bouding_box.height > frame.rows - margin) {
-      result.is_partical = true;  // 目标不完整
-    } else {
-      result.is_partical = false;  // 目标完整
-    }
-    //---
-
     std::vector<cv::Point2f> pts(rect_points, rect_points + 4);
     result.points = sortPoints(pts);
   }
