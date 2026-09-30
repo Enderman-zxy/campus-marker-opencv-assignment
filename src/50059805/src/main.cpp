@@ -2,6 +2,6 @@
 
 int main() {
   VideoProcessor processor;
-  processor.run("../../data/raw/marker_video.avi");
+  processor.run("../../../data/raw/marker_video.avi");
   return 0;
 }

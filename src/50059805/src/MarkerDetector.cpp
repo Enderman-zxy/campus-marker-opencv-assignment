@@ -1,11 +1,10 @@
 #include "MarkerDetector.h"
+
 #include <string>
 
 MarkerDetector::MarkerDetector() {}
 
-
 cv::Mat MarkerDetector::preprocess(const cv::Mat& frame) {
-  
   if (frame.empty()) {
     return cv::Mat();
   }
@@ -17,7 +16,6 @@ cv::Mat MarkerDetector::preprocess(const cv::Mat& frame) {
   // 2. 二值化：因为Marker是发光的，提取高亮区域
   // 阈值(200)需要根据实际视频调整
   cv::inRange(gray, cv::Scalar(200), cv::Scalar(255), gray);
-  
 
   // 3. 形态学操作：闭运算将四个分离的L型连接成一个整体，再开运算去除噪点
   // 补充：这里连接效果不好，所以改为只进行开运算，去除噪点
@@ -43,19 +41,19 @@ MarkerResult MarkerDetector::detect(const cv::Mat& frame) {
   }
 
   std::vector<std::vector<cv::Point>> contours;
-  cv::findContours(preprocessed_img, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE); 
+  cv::findContours(preprocessed_img, contours, cv::RETR_EXTERNAL,
+                   cv::CHAIN_APPROX_SIMPLE);
 
   std::vector<cv::Point2i> all_l_points;
 
-  double min_area = 100.0; // 最小面积阈值，根据实际情况调整
+  double min_area = 100.0;  // 最小面积阈值，根据实际情况调整
 
-  
   // 4. 寻找轮廓
   // 5. 几何筛选：多边形拟合，判断是否为四边形
   for (const auto& contour : contours) {
     double area = cv::contourArea(contour);
     if (area < min_area) {
-      continue; // 面积太小，忽略
+      continue;  // 面积太小，忽略
     }
 
     cv::Rect rect = cv::boundingRect(contour);
@@ -63,7 +61,7 @@ MarkerResult MarkerDetector::detect(const cv::Mat& frame) {
     float aspect_ratio = static_cast<float>(rect.width) / rect.height;
 
     if (aspect_ratio < 0.5 || aspect_ratio > 2.0) {
-      continue; // 长宽比不符合要求，忽略
+      continue;  // 长宽比不符合要求，忽略
     }
 
     for (const auto& point : contour) {
@@ -81,14 +79,26 @@ MarkerResult MarkerDetector::detect(const cv::Mat& frame) {
 
     result.detected = true;
     result.boundingBox = bouding_box;
-    
+
+    //--- 补充，检测是否目标完整处于画面中
+    int margin = 10;
+    if (bouding_box.x <= margin || bouding_box.y <= margin ||
+        bouding_box.x + bouding_box.width > frame.cols - margin ||
+        bouding_box.y + bouding_box.height > frame.rows - margin) {
+      result.is_partical = true;  // 目标不完整
+    } else {
+      result.is_partical = false;  // 目标完整
+    }
+    //---
+
     std::vector<cv::Point2f> pts(rect_points, rect_points + 4);
     result.points = sortPoints(pts);
   }
   return result;
 }
 
-std::vector<cv::Point2f> MarkerDetector::sortPoints(const std::vector<cv::Point2f>& pts) {
+std::vector<cv::Point2f> MarkerDetector::sortPoints(
+    const std::vector<cv::Point2f>& pts) {
   std::vector<cv::Point2f> sorted(4);
   cv::Point2f center(0, 0);
 
@@ -99,15 +109,14 @@ std::vector<cv::Point2f> MarkerDetector::sortPoints(const std::vector<cv::Point2
 
   for (const auto& pt : pts) {
     if (pt.x < center.x && pt.y < center.y) {
-      sorted[0] = pt; // 左上
+      sorted[0] = pt;  // 左上
     } else if (pt.x > center.x && pt.y < center.y) {
-      sorted[1] = pt; // 右上
+      sorted[1] = pt;  // 右上
     } else if (pt.x > center.x && pt.y > center.y) {
-      sorted[2] = pt; // 右下
+      sorted[2] = pt;  // 右下
     } else if (pt.x < center.x && pt.y > center.y) {
-      sorted[3] = pt; // 左下
+      sorted[3] = pt;  // 左下
     }
   }
   return sorted;
 }
-
