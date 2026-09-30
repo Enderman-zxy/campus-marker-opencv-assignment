@@ -5,9 +5,9 @@
 #include <vector>
 
 struct MarkerResult {
-  bool detected = false;
-  std::vector<cv::Point2f> points;
-  cv::Rect boundingBox;
+  bool detected_ = false;
+  std::vector<cv::Point2f> points_;
+  cv::Rect bounding_box_;
 };
 
 class MarkerDetector {

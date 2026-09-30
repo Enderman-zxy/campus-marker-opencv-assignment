@@ -27,7 +27,7 @@ void VideoProcessor::run(const std::string& videoPath) {
       visualizer.drawMarker(frame, lastResult_);
     } else {
       MarkerResult emptyResult;
-      emptyResult.detected = false;
+      emptyResult.detected_ = false;
       visualizer.drawMarker(frame, emptyResult);
     }
     cv::imshow("Marker Detection", frame);
@@ -41,7 +41,7 @@ void VideoProcessor::run(const std::string& videoPath) {
 
 
 void VideoProcessor::updateState(const MarkerResult& currentResult) {
-  if (currentResult.detected) {
+  if (currentResult.detected_) {
     detectedFrames_++;
     lostFrames_ = 0;
     if (detectedFrames_ >= MIN_DETECTED_FRAMES) {
@@ -51,7 +51,7 @@ void VideoProcessor::updateState(const MarkerResult& currentResult) {
     lostFrames_++;
     detectedFrames_ = 0;
     if (lostFrames_ > MAX_LOST_FRAMES) {
-      lastResult_.detected = false;  // 标记为未检测到
+      lastResult_.detected_ = false;  // 标记为未检测到
     }
     return;
   }

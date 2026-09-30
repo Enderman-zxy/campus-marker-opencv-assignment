@@ -77,11 +77,11 @@ MarkerResult MarkerDetector::detect(const cv::Mat& frame) {
     cv::Point2f rect_points[4];
     rotated_rect.points(rect_points);
 
-    result.detected = true;
-    result.boundingBox = bouding_box;
+    result.detected_ = true;
+    result.bounding_box_ = bouding_box;
 
     std::vector<cv::Point2f> pts(rect_points, rect_points + 4);
-    result.points = sortPoints(pts);
+    result.points_ = sortPoints(pts);
   }
   return result;
 }
