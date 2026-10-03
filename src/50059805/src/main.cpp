@@ -12,47 +12,52 @@ void runChallengePart() {
   std::cout << "Running challenge part: Camera calibration and marker detection"
             << std::endl;
   Calibrator calibrator;
+  std::string params_file = "camera_params.yml";
   std::string calib_video_path = "../../../data/raw/calibration_video.avi";
-  cv::VideoCapture calib_cap(calib_video_path);
-  if (!calib_cap.isOpened()) {
-    std::cerr << "Failed to open calibration video: " << calib_video_path
+  std::string marker_video_path = "../../../data/raw/marker_video.avi";
+  if (calibrator.loadParams(params_file)) {
+    std::cout << "Loaded camera parameters from " << params_file << std::endl;
+  } else {
+    cv::VideoCapture calib_cap(calib_video_path);
+    if (!calib_cap.isOpened()) {
+      std::cerr << "Failed to open calibration video: " << calib_video_path
+                << std::endl;
+      return;
+    }
+    std::cout << "Starting camera calibration using video: " << calib_video_path
               << std::endl;
-    return;
-  }
-  std::cout << "Starting camera calibration using video: " << calib_video_path
-            << std::endl;
 
-  std::vector<std::vector<cv::Point2f> > image_points;
-  cv::Mat frame;
-  int frame_count = 0;
+    std::vector<std::vector<cv::Point2f> > image_points;
+    cv::Mat frame;
+    int frame_count = 0;
 
-  while (calib_cap.read(frame)) {
-    if (frame.empty()) {
-      std::cerr << "Empty frame captured from calibration video." << std::endl;
-      frame_count++;
-      continue;
-    }
-    if (frame_count % 30 == 0) {
-      std::vector<cv::Point2f> corners;
-      if (calibrator.extractCorners(frame, corners)) {
-        image_points.push_back(corners);
+    while (calib_cap.read(frame)) {
+      if (frame.empty()) {
+        std::cerr << "Empty frame captured from calibration video."
+                  << std::endl;
+        frame_count++;
+        continue;
       }
+      if (frame_count % 30 == 0) {
+        std::vector<cv::Point2f> corners;
+        if (calibrator.extractCorners(frame, corners)) {
+          image_points.push_back(corners);
+        }
+      }
+      frame_count++;
     }
-    frame_count++;
+    calib_cap.release();
+    std::cout << "Extracted corners from " << image_points.size() << " frames."
+              << std::endl;
+
+    if (image_points.size() < 10) {
+      std::cerr << "Not enough corners detected for calibration." << std::endl;
+      return;
+    }
+    double error = calibrator.calibrate(image_points, cv::Size(7, 7), 15.0f,
+                                        cv::Size(1440, 1080));
+    calibrator.saveParams(params_file);
   }
-  calib_cap.release();
-
-  std::cout << "Extracted corners from " << image_points.size() << " frames."
-            << std::endl;
-
-  if (image_points.size() < 10) {
-    std::cerr << "Not enough corners detected for calibration." << std::endl;
-    return;
-  }
-
-  double error = calibrator.calibrate(image_points, cv::Size(7, 7), 15.0f,
-                                      cv::Size(1440, 1080));
-  calibrator.saveParams("camera_params.yml");
 
   PoseEstimator pose_estimator(calibrator.getCameraMatrix(),
                                calibrator.getDistCoeffs());
@@ -66,7 +71,6 @@ void runChallengePart() {
       cv::Point3f(marker_size / 2, marker_size / 2, 0),
       cv::Point3f(-marker_size / 2, marker_size / 2, 0)};
 
-  std::string marker_video_path = "../../../data/raw/marker_video.avi";
   cv::VideoCapture marker_cap(marker_video_path);
   if (!marker_cap.isOpened()) {
     std::cerr << "Failed to open marker video: " << marker_video_path
@@ -77,6 +81,7 @@ void runChallengePart() {
   std::cout << "Starting marker detection and pose estimation using video: "
             << marker_video_path << std::endl;
 
+  cv::Mat frame;
   while (marker_cap.read(frame)) {
     if (frame.empty()) {
       std::cerr << "Empty frame captured from marker video." << std::endl;
