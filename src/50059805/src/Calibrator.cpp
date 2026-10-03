@@ -2,6 +2,7 @@
 
 Calibrator::Calibrator() {}
 
+// 提取棋盘格角点
 bool Calibrator::extractCorners(const cv::Mat& frame,
                                 std::vector<cv::Point2f>& corners) {
   cv::Mat gray;
@@ -19,6 +20,7 @@ bool Calibrator::extractCorners(const cv::Mat& frame,
   return found;
 }
 
+// 使用提取的角点进行相机标定
 double Calibrator::calibrate(
     const std::vector<std::vector<cv::Point2f> >& image_points,
     cv::Size board_size, float square_size, cv::Size image_size) {
@@ -42,6 +44,7 @@ double Calibrator::calibrate(
   return ret;
 }
 
+// 保存相机参数到文件
 void Calibrator::saveParams(const std::string& filename) {
   cv::FileStorage fs(filename, cv::FileStorage::WRITE);
   fs << "camera_matrix" << camera_matrix_;
@@ -50,6 +53,7 @@ void Calibrator::saveParams(const std::string& filename) {
   std::cout << "Params saved to " << filename << std::endl;
 }
 
+// 从文件加载相机参数
 bool Calibrator::loadParams(const std::string& filename) {
   cv::FileStorage fs(filename, cv::FileStorage::READ);
   if (!fs.isOpened()) {

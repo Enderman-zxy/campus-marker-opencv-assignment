@@ -7,6 +7,7 @@ PoseEstimator::PoseEstimator(const cv::Mat& camera_matrix,
     : camera_matrix_(camera_matrix.clone()),
       dist_coeffs_(dist_coeffs.clone()) {}
 
+// 位姿解算
 bool PoseEstimator::solve(const std::vector<cv::Point2f>& image_points,
                           const std::vector<cv::Point3f>& object_points) {
   if (image_points.size() < 4 || object_points.size() < 4) {
@@ -18,6 +19,7 @@ bool PoseEstimator::solve(const std::vector<cv::Point2f>& image_points,
   return success;
 }
 
+// 绘制坐标轴
 void PoseEstimator::drawAxis(cv::Mat& frame, float axis_length) {
   std::vector<cv::Point3f> axis_points = {
       cv::Point3f(0, 0, 0), cv::Point3f(axis_length, 0, 0),

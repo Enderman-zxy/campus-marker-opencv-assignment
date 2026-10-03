@@ -4,6 +4,7 @@
 
 MarkerDetector::MarkerDetector() {}
 
+// 预处理图像：灰度化、二值化、形态学操作
 cv::Mat MarkerDetector::preprocess(const cv::Mat& frame) {
   if (frame.empty()) {
     return cv::Mat();
@@ -27,6 +28,8 @@ cv::Mat MarkerDetector::preprocess(const cv::Mat& frame) {
   return morphed;
 }
 
+
+// 检测Marker
 MarkerResult MarkerDetector::detect(const cv::Mat& frame) {
   MarkerResult result;
 
@@ -68,7 +71,6 @@ MarkerResult MarkerDetector::detect(const cv::Mat& frame) {
       all_l_points.push_back(point);
     }
   }
-
   if (all_l_points.size() > 20) {
     cv::Rect bouding_box = cv::boundingRect(all_l_points);
 
@@ -86,6 +88,7 @@ MarkerResult MarkerDetector::detect(const cv::Mat& frame) {
   return result;
 }
 
+// 将四个点按顺时针排序，左上、右上、右下、左下
 std::vector<cv::Point2f> MarkerDetector::sortPoints(
     const std::vector<cv::Point2f>& pts) {
   std::vector<cv::Point2f> sorted(4);

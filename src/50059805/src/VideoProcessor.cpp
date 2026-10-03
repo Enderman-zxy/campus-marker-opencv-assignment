@@ -4,6 +4,7 @@
 
 VideoProcessor::VideoProcessor() {}
 
+// 处理视频流，检测标记，并根据检测结果更新状态
 void VideoProcessor::run(const std::string& videoPath) {
   cv::VideoCapture cap(videoPath);
   if (!cap.isOpened()) {
@@ -23,6 +24,7 @@ void VideoProcessor::run(const std::string& videoPath) {
     MarkerResult currentResult = detector_.detect(frame);
     updateState(currentResult);
 
+    // 根据状态绘制标记检测结果
     if (detectedFrames_ >= MIN_DETECTED_FRAMES && lostFrames_ == 0) {
       visualizer.drawMarker(frame, lastResult_);
     } else {
@@ -39,7 +41,7 @@ void VideoProcessor::run(const std::string& videoPath) {
   cv::destroyAllWindows();
 }
 
-
+// 更新状态：根据当前检测结果更新连续检测和丢失帧计数
 void VideoProcessor::updateState(const MarkerResult& currentResult) {
   if (currentResult.detected_) {
     detectedFrames_++;

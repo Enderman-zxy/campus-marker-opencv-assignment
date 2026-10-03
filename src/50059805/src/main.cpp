@@ -64,7 +64,7 @@ void runChallengePart() {
   MarkerDetector detector;
   Visualizer visualizer;
 
-  float marker_size = 100.0f;  // Marker size in mm
+  float marker_size = 100.0f;  // Marker 大小（单位 mm）
   std::vector<cv::Point3f> marker_3d_points = {
       cv::Point3f(-marker_size / 2, -marker_size / 2, 0),
       cv::Point3f(marker_size / 2, -marker_size / 2, 0),
@@ -97,7 +97,7 @@ void runChallengePart() {
     visualizer.drawMarker(frame, result);
 
     cv::imshow("Marker Detection and Pose Estimation", frame);
-    if (cv::waitKey(30) == 27) {  // Press 'Esc' to exit
+    if (cv::waitKey(30) == 27) {  // 按 ESC 键退出
       break;
     }
   }

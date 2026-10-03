@@ -4,6 +4,10 @@
 #include <string>
 #include <vector>
 
+/*
+ * 相机标定类，用于从棋盘格图像中提取角点并进行相机标定
+*/
+
 class Calibrator {
  public:
   Calibrator();

@@ -2,6 +2,7 @@
 
 Visualizer::Visualizer() {}
 
+// 绘制标记的检测结果，包括四个角点、边界框和角点编号
 void Visualizer::drawMarker(cv::Mat& frame, const MarkerResult& result) {
   if (frame.empty()) {
     return;

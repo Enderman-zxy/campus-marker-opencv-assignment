@@ -4,6 +4,12 @@
 
 #include "MarkerDetector.h"
 
+/*
+ * Visualizer
+ * 类用于在图像上绘制标记的检测结果，包括标记的四个角点、边界框和角点编号
+ * 它使用不同的颜色来区分标记的四个角点，并在每个角点旁边绘制编号，以便更直观地显示标记的检测结果
+ */
+
 class Visualizer {
  public:
   Visualizer();

@@ -10,6 +10,11 @@ struct MarkerResult {
   cv::Rect bounding_box_;
 };
 
+/*
+ * MarkerDetector 类用于检测图像中的标记（Marker），并返回检测结果
+ * 包括标记是否被检测到、标记的四个角点坐标以及标记的边界框
+*/
+
 class MarkerDetector {
  public:
   MarkerDetector();
