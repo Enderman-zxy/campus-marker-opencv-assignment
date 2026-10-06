@@ -54,7 +54,7 @@ void runChallengePart() {
       std::cerr << "Not enough corners detected for calibration." << std::endl;
       return;
     }
-    double error = calibrator.calibrate(image_points, cv::Size(7, 7), 15.0f,
+    double error = calibrator.calibrate(image_points, cv::Size(7, 7), 0.03f,
                                         cv::Size(1440, 1080));
     calibrator.saveParams(params_file);
   }
@@ -64,7 +64,7 @@ void runChallengePart() {
   MarkerDetector detector;
   Visualizer visualizer;
 
-  float marker_size = 100.0f;  // Marker 大小（单位 mm）
+  float marker_size = 0.08f;  // Marker 大小（单位 m）
   std::vector<cv::Point3f> marker_3d_points = {
       cv::Point3f(-marker_size / 2, -marker_size / 2, 0),
       cv::Point3f(marker_size / 2, -marker_size / 2, 0),
@@ -82,19 +82,53 @@ void runChallengePart() {
             << marker_video_path << std::endl;
 
   cv::Mat frame;
+
+  std::string output_video_path = "output_marker_detection.avi";
+  int output_fps = 30;
+  int max_processed_frames = 300;  // 最多处理的帧数
+  int processed_frames = 0;
+
+  int frame_width = static_cast<int>(marker_cap.get(cv::CAP_PROP_FRAME_WIDTH));
+  int frame_height =
+      static_cast<int>(marker_cap.get(cv::CAP_PROP_FRAME_HEIGHT));
+  cv::Size frame_size(frame_width, frame_height);
+
+  cv::VideoWriter video_writer(output_video_path,
+                               cv::VideoWriter::fourcc('M', 'J', 'P', 'G'),
+                               output_fps, frame_size, true);
+
+  if(!video_writer.isOpened()) {
+    std::cerr << "Failed to open video writer for output: " << output_video_path
+              << std::endl;
+    return;
+  }
+
+  int frame_count = 0;
+
   while (marker_cap.read(frame)) {
     if (frame.empty()) {
       std::cerr << "Empty frame captured from marker video." << std::endl;
       continue;
     }
 
+    frame_count++;
+    if (frame_count > max_processed_frames) {
+      std::cout << "Reached maximum processed frames: " << max_processed_frames << std::endl;
+      break;
+    }
+
     MarkerResult result = detector.detect(frame);
     if (result.detected_ == true && result.points_.size() == 4) {
       if (pose_estimator.solve(result.points_, marker_3d_points)) {
-        pose_estimator.drawAxis(frame, 50.0f);
+        pose_estimator.drawAxis(frame, 0.04f);
       }
     }
     visualizer.drawMarker(frame, result);
+
+    if (video_writer.isOpened()) {
+      video_writer.write(frame);
+      processed_frames++;
+    }
 
     cv::imshow("Marker Detection and Pose Estimation", frame);
     if (cv::waitKey(30) == 27) {  // 按 ESC 键退出
@@ -102,6 +136,10 @@ void runChallengePart() {
     }
   }
   marker_cap.release();
+  if (video_writer.isOpened()) {
+    video_writer.release();
+    std::cout << "Output video saved to: " << output_video_path << std::endl;
+  }
   cv::destroyAllWindows();
 }
 int main(int argc, char** argv) {

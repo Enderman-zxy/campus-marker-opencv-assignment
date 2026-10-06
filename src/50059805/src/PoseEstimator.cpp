@@ -35,8 +35,9 @@ void PoseEstimator::drawAxis(cv::Mat& frame, float axis_length) {
   cv::line(frame, image_points[0], image_points[3], cv::Scalar(255, 0, 0),
            3);  // Z-axis in blue
 
-  double distance = cv::norm(tvec_);
-  cv::putText(frame, "Distance: " + std::to_string(distance) + " mm",
+  double distance_m = cv::norm(tvec_);
+  double distance_mm = distance_m * 1000.0;  // Convert to millimeters
+  cv::putText(frame, "Distance: " + std::to_string(distance_mm) + " mm",
               cv::Point(30, 80), cv::FONT_HERSHEY_SIMPLEX, 0.8,
               cv::Scalar(0, 255, 255), 2);
 }
